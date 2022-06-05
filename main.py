@@ -1,38 +1,8 @@
-import time
+import io
 
 import streamlit as st
-from PIL import Image
-from streamlit_option_menu import option_menu
 
-
-def option_menu_style():
-    return option_menu(
-        menu_title=None,
-        options=["Конституция РФ", "Уголовный кодекс", "Трудовой кодекс"],
-        icons=["book", "book", "book"],
-        menu_icon="cast",
-        default_index=0,
-        orientation="horizontal",
-        styles={
-            "nav-link": {
-                "font-size": "14px",
-                "text-align": "left",
-                "margin": "0px",
-                "--hover-color": "#eee",
-            }
-        },
-        # styles={
-        #     "container": {"padding": "!important", "background-color": "#fafafa"},
-        #     "icon": {"color": "orange", "font-size": "25px"},
-        #     "nav-link": {
-        #         "font-size": "14px",
-        #         "text-align": "left",
-        #         "margin": "0px",
-        #         "--hover-color": "#eee",
-        #     },
-        #     "nav-link-selected": {"background-color": "green"},
-        # },
-    )
+import model as md
 
 
 def _hide_streamlit_menu():
@@ -45,29 +15,47 @@ def _hide_streamlit_menu():
     st.markdown(hide_menu_style, unsafe_allow_html=True)
 
 
-@st.cache()
-def AI_thinking(question: str):
-    print(question)
-    time.sleep(5)
-    return "Сам думай, я не хочу на это отвечать, кожанный ублюдко!" + question
+# @st.cache
+def AI_thinking(question: str, option: str):
+    with st.spinner("AI thinking..."):
+        return md.get_answer(option, question)
+
+
+# return f'Answer: {res["answer"]}\nConfidence in the answer: {str(round(res["score"], 3))}'
+# st.write("Answer: ", res['answer'])
+# st.write("Confidence in the answer: ", str(round(res['score'], 3)))
 
 
 def main():
-    img = Image.open('resurses/o5h0mamujPM.jpg')
-    st.set_page_config(page_title="FindAnswer App", page_icon=img)
+    st.set_page_config(page_title="Law Finder")
     _hide_streamlit_menu()
-    selected_menu = option_menu_style()
-    if selected_menu == "Конституция РФ":
-        st.write("Вы вбрали Конституцию")
-    if selected_menu == "Уголовный кодекс":
-        st.write("Вы вбрали Уголовный кодекс")
-    if selected_menu == "Трудовой кодекс":
-        st.write("Трудовой кодекс")
 
-    question = st.text_area("Введите вопрос", "")
-    if st.button("Get Answer", disabled=question == ""):
-        answer = AI_thinking(question)
-        st.write(f'Ответ на ваш вопрос {answer}')
+    st.title("Law Finder - найдет все ответы.")
+
+    option = st.selectbox(
+        'Выберите законодательный акт: ',
+        ('Конституция РФ', 'Федеральные законы РФ', 'Трудовой кодекс РФ', 'Собственный текст'))
+
+    if option == "Собственный текст":
+        uploaded_file = st.file_uploader(label="Загрузите сюда файл в вашим текстом", type=['txt'])
+        if uploaded_file is not None:
+            stringio = io.StringIO(uploaded_file.getvalue().decode("utf-8"))
+            st.write(stringio.getvalue())
+            st.text_area()
+    else:
+        form = st.form(key="FORM")
+        with form:
+            question = st.text_area("QUESTION:")
+            submitted = st.form_submit_button(label="Get Answer")
+        if submitted:
+            print(question, option)
+            if question == "":
+                st.error("Введите вопрос!")
+            if question != "":
+                answer, context = AI_thinking(question, option)
+                st.markdown(
+                    f'### Answer: \n ### {answer["answer"]}\n Confidence in the answer: {str(round(answer["score"], 3))}')
+                st.text_area(value=context, disabled=True, label="Context", height=500)
 
 
 if __name__ == "__main__":
