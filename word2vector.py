@@ -4,7 +4,7 @@ import re
 from string import punctuation
 
 import numpy as np
-from navec import Navec
+import compress_fasttext
 from pymystem3 import Mystem
 from razdel import tokenize, sentenize
 
@@ -14,9 +14,10 @@ m = Mystem()
 
 doc_files = doc_file_worker.get_doc_files()
 print("finished stemming")
-path = 'resources/navec_hudlit_v1_12B_500K_300d_100q.tar'
-navec = Navec.load(path)
-print("loaded navec")
+model = compress_fasttext.models.CompressedFastTextKeyedVectors.load(
+    'https://github.com/avidale/compress-fasttext/releases/download/gensim-4-draft/geowac_tokens_sg_300_5_2020-100K-20K-100.bin'
+)
+print("loaded fasttext")
 
 
 def kl_preprocess(sent):
@@ -44,11 +45,7 @@ def embed(text):
     res = []
     tokens = kl_tokenize(text)
     for token in tokens:
-        if token in navec:
-            res.append(navec[token])
-
-    if not res:
-        res.append(navec['<unk>'])
+        res.append(model[token])
 
     return np.mean(res, axis=0)
 
