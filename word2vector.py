@@ -8,9 +8,11 @@ from navec import Navec
 from pymystem3 import Mystem
 from razdel import tokenize, sentenize
 
+import doc_file_worker
+
 m = Mystem()
 
-doc_files = {"Конституция РФ": "constitution"}
+doc_files = doc_file_worker.get_doc_files()
 print("finished stemming")
 path = 'resources/navec_hudlit_v1_12B_500K_300d_100q.tar'
 navec = Navec.load(path)

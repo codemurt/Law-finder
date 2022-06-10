@@ -3,11 +3,12 @@ from pymystem3 import Mystem
 from razdel import sentenize
 from transformers import pipeline
 
+import doc_file_worker
 import word2vector
 
 m = Mystem()
 
-doc_files = {"Конституция РФ": "constitution"}
+doc_files = doc_file_worker.get_doc_files()
 qa_model = pipeline("question-answering", model="AlexKay/xlm-roberta-large-qa-multilingual-finedtuned-ru")
 
 
@@ -53,9 +54,6 @@ def get_answer(option, question):
 
     context = get_context(indexes)
     print("got context")
-    print("start downloading")
-
-    print("finish downloading")
     results = qa_model(question=question, context=context)
 
     indexes.clear()

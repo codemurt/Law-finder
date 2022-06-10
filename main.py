@@ -1,7 +1,9 @@
 import io
 
 import streamlit as st
+from tika import parser
 
+import doc_file_worker
 import model as md
 
 
@@ -34,14 +36,28 @@ def main():
 
     option = st.selectbox(
         'Выберите законодательный акт: ',
-        ('Конституция РФ', 'Федеральные законы РФ', 'Трудовой кодекс РФ', 'Собственный текст'))
+        doc_file_worker.get_doc_files())
 
     if option == "Собственный текст":
-        uploaded_file = st.file_uploader(label="Загрузите сюда файл в вашим текстом", type=['txt'])
-        if uploaded_file is not None:
-            stringio = io.StringIO(uploaded_file.getvalue().decode("utf-8"))
-            st.write(stringio.getvalue())
-            st.text_area()
+        form = st.form(key="FORM")
+        with form:
+            doc_name = st.text_input("Введите название документа")
+            uploaded_file = st.file_uploader(label="Загрузите сюда файл в вашим текстом", type=['txt'])
+            submitted = st.form_submit_button(label="Upload file")
+        if submitted:
+            if uploaded_file is not None:
+                print(uploaded_file.type)
+                # if uploaded_file.type == 'application/pdf':
+                #     text = parser.from_buffer(uploaded_file)
+                #     print(text['content'])
+                text = io.StringIO(uploaded_file.getvalue().decode("utf-8")).getvalue()
+                if doc_file_worker.add_file(doc_name, uploaded_file.name, text):
+                    st.info("Документ успешно сохранен")
+                    st.write(text[:len(text) % 1000] + ".....")
+                else:
+                    st.error("Документ с таким название уже существует")
+            else:
+                st.error("Не указан файл")
     else:
         form = st.form(key="FORM")
         with form:
