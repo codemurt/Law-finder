@@ -1,2 +1,2 @@
 # intelligentanswer
-Law-finder - сервис по поиску юр ответов
+Law-finder - сервис по поиску юр ответов.
