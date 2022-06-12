@@ -3,8 +3,8 @@ import pickle as pk
 import re
 from string import punctuation
 
-import numpy as np
 import compress_fasttext
+import numpy as np
 from pymystem3 import Mystem
 from razdel import tokenize, sentenize
 
@@ -15,8 +15,7 @@ m = Mystem()
 doc_files = doc_file_worker.get_doc_files()
 print("finished stemming")
 model = compress_fasttext.models.CompressedFastTextKeyedVectors.load(
-    'https://github.com/avidale/compress-fasttext/releases/download/gensim-4-draft/geowac_tokens_sg_300_5_2020-100K-20K-100.bin'
-)
+    'resources/geowac_tokens_sg_300_5_2020-100K-20K-100.bin')
 print("loaded fasttext")
 
 
