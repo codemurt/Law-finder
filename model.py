@@ -28,7 +28,7 @@ def get_answer(option, question):
     def add_idx_to_set(idx):
         idx = int(idx)
         for i in range(idx - 2, idx + 3):
-            if 0 < i < len(lst):
+            if 0 <= i < len(lst):
                 indexes.add(i)
 
     def get_result(text):
@@ -50,6 +50,7 @@ def get_answer(option, question):
         ctx = ""
         for el in set_indexes:
             ctx += lst[el]
+            ctx += " "
         return ctx
 
     context = get_context(indexes)
