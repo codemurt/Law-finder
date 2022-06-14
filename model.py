@@ -4,7 +4,7 @@ from razdel import sentenize
 from transformers import pipeline
 
 import doc_file_worker
-import word2vector
+import word_embedder
 
 m = Mystem()
 
@@ -21,7 +21,7 @@ def get_answer(option, question):
         res = np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v))
         return res
 
-    embedded_data = word2vector.get_embeddings(option)
+    embedded_data = word_embedder.get_embeddings(option)
     print("embedded data")
     indexes = set()
 
@@ -32,7 +32,7 @@ def get_answer(option, question):
                 indexes.add(i)
 
     def get_result(text):
-        query = word2vector.embed(text)
+        query = word_embedder.embed(text)
 
         cosines = [(cosine(x[0], query), x[1]) for x in embedded_data]
         print("got cosines")
@@ -42,7 +42,7 @@ def get_answer(option, question):
             idx_ans = int(vals[i][1])
             add_idx_to_set(idx_ans)
 
-    question_emb = word2vector.kl_stemming(word2vector.kl_preprocess(question))
+    question_emb = word_embedder.kl_stemming(word_embedder.kl_preprocess(question))
     print("preprocessed question")
     get_result(question_emb)
 
