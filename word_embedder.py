@@ -15,7 +15,7 @@ m = Mystem()
 doc_files = doc_file_worker.get_doc_files()
 print("finished stemming")
 model = compress_fasttext.models.CompressedFastTextKeyedVectors.load(
-    'resources/geowac_tokens_sg_300_5_2020-100K-20K-100.bin')
+    'resources/models/geowac_tokens_sg_300_5_2020-100K-20K-100.bin')
 print("loaded fasttext")
 
 

@@ -3,7 +3,7 @@ import io
 import streamlit as st
 from annotated_text import annotation
 
-import PDFExtractor as pdfe
+import pdf_extractor as pdfe
 import doc_file_worker
 import model as md
 
@@ -18,9 +18,8 @@ def _hide_streamlit_menu():
     st.markdown(hide_menu_style, unsafe_allow_html=True)
 
 
-# @st.cache
 def AI_thinking(question: str, option: str):
-    with st.spinner("AI thinking..."):
+    with st.spinner("ИИ думает..."):
         return md.get_answer(option, question)
 
 
@@ -39,7 +38,7 @@ def main():
         with form:
             doc_name = st.text_input("Введите название документа")
             uploaded_file = st.file_uploader(label="Загрузите сюда файл в вашим текстом", type=['txt', 'pdf'])
-            submitted = st.form_submit_button(label="Upload file")
+            submitted = st.form_submit_button(label="Загрузить файл")
 
         if submitted:
             if uploaded_file is not None:
@@ -59,8 +58,8 @@ def main():
     else:
         form = st.form(key="FORM")
         with form:
-            question = st.text_area("QUESTION:")
-            submitted = st.form_submit_button(label="Get Answer")
+            question = st.text_area("Вопрос:")
+            submitted = st.form_submit_button(label="Получить ответ")
         if submitted:
             print(question, option)
             if question == "":
@@ -68,21 +67,17 @@ def main():
             if question != "":
                 answer, context = AI_thinking(question, option)
                 answer_str = answer['answer']
-                st.write("## Correct answer")
+                st.write("## Ответ")
                 st.write("# " + answer_str)
-                st.write(f'Confidence in the answer: {str(round(answer["score"], 3))}')
+                st.write(f'Уверенность: {str(round(answer["score"], 3))}')
 
                 start_idx = context.find(answer_str)
                 end_idx = start_idx + len(answer_str)
 
-                st.write("## Context")
+                st.write("## Контекст")
                 st.markdown(
                     context[:start_idx] + str(annotation(answer_str, "ANSWER", "#8ef")) + context[end_idx:],
                     unsafe_allow_html=True)
-
-                # st.markdown(
-                # f'### Answer: \n ### {answer["answer"]}\n Confidence in the answer: {str(round(answer["score"], 3))}')
-                # st.text_area(value=context, disabled=True, label="Context", height=500)
 
 
 if __name__ == "__main__":
