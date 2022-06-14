@@ -30,7 +30,7 @@ def main():
     st.title("Law Finder - найдет все ответы.")
 
     option = st.selectbox(
-        'Выберите законодательный акт: ',
+        'Выберите законодательный акт или добавьте свой документ: ',
         doc_file_worker.get_doc_files())
 
     if option == "Собственный текст":
@@ -66,15 +66,15 @@ def main():
                 st.error("Введите вопрос!")
             if question != "":
                 answer, context = AI_thinking(question, option)
-                answer_str = answer['answer']
-                st.write("## Ответ")
-                st.write("# " + answer_str)
+                answer_str: str = answer['answer']
+                st.write("## Ответ: ")
+                st.write("# " + answer_str.strip())
                 st.write(f'Уверенность: {str(round(answer["score"], 3))}')
 
                 start_idx = context.find(answer_str)
                 end_idx = start_idx + len(answer_str)
 
-                st.write("## Контекст")
+                st.write("## Контекст: ")
                 st.markdown(
                     context[:start_idx] + str(annotation(answer_str, "ANSWER", "#8ef")) + context[end_idx:],
                     unsafe_allow_html=True)
