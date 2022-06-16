@@ -3,9 +3,9 @@ import io
 import streamlit as st
 from annotated_text import annotation
 
-import pdf_extractor as pdfe
 import doc_file_worker
 import model as md
+import pdf_extractor as pdfe
 
 
 def _hide_streamlit_menu():
@@ -75,7 +75,7 @@ def main():
                 end_idx = start_idx + len(answer_str)
 
                 st.write("## Контекст: ")
-                st.markdown(
+                st.write(
                     context[:start_idx] + str(annotation(answer_str, "ANSWER", "#8ef")) + context[end_idx:],
                     unsafe_allow_html=True)
 
